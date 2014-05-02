@@ -1,0 +1,6 @@
+-cpp Android
+##-debug
+-main Main.hx
+-lib Sdlhaxe
+-D PLATFORM=android-9
+-D android

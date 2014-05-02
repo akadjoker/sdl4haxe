@@ -1,0 +1,83 @@
+<xml>
+	<include name="${HXCPP}/build-tool/BuildCommon.xml"/>
+	<ext value=".ndll" unless="mobile"/>
+	<ext value=".ndll" if="gph"/>
+	<set name="GCC_THIN_ARCHIVE" value="1" if="iphone"/>
+	<set name="debug" value="debug" if ="fulldebug" />
+	<set name="iphonesim" if="ios" />
+	<set name="iphoneos" if="ios" unless="simulator" />
+	<set name="sdl" value="1" if="linux"/>
+	<set name="sdl" value="1" if="macos"/>
+	<set name="sdl" value="1" if="windows"/>
+	<set name="full_debug" value="0"/>
+	<set name="tool" value="exe" unless="iphone"/>
+	<set name="tool" value="static" if="iphone"/>
+	<set name="ssl-extra" value="0" />
+	<set name="ndll-tool" value="dll" unless="iphone"/>
+	<set name="ndll-tool" value="static" if="iphone"/>
+	<files id="sdl">
+		<compilerflag value="-Isdl-static/include"/>
+		<compilerflag value="-Isdl-static/include/SDL13"/>
+		<file name="sdl/main.cpp"/>
+	</files>
+	<files id="linux">
+	</files>
+	<files id="windows">
+	</files>
+	<files id="common">
+	</files>
+	<set name="name_extra" value=".iphoneos${IOS_ARCH}" if="iphoneos"/>
+	<set name="name_extra" value=".iphonesim" if="iphonesim"/>
+
+	<set name="name_extra" value="-x86" if="simulator" unless="iphonesim" />
+
+	<set name="debug_extra" value="-debug" if="fulldebug" />
+
+	<section if="fulldebug" >
+		<set name="name_extra" value=".debug"/>
+		<set name="name_extra" value=".debug-x86" if="simulator" unless="iphonesim" />
+		<set name="name_extra" value=".debug.iphoneos${IOS_ARCH}" if="iphoneos"/>
+		<set name="name_extra" value=".debug.iphonesim" if="iphonesim"/>
+	</section>
+
+	<set name="SLIBEXT" value=".lib" if="windows"/>
+	<set name="SLIBEXT" value=".a" unless="windows"/>
+	<set name="SLIBEXT" value=".so" if="webos"/>
+	<set name="THIRDPARTY_LIBS" value="sdl-static/lib/Mac/" if="macos"/>
+	<set name="THIRDPARTY_LIBS" value="sdl-static/lib/Windows/" if="windows"/>
+	<set name="THIRDPARTY_LIBS" value="sdl-static/lib/webOS/" if="webos" />
+	<set name="THIRDPARTY_LIBS" value="sdl-static/lib/Linux/" if="linux"/>
+	<set name="THIRDPARTY_LIBS" value="sdl-static/lib/Android/" if="android"/>
+	<set name="THIRDPARTY_LIBS" value="sdl-static/lib/iPhone/" if="iphone"/>
+	<set name="THIRDPARTY_LIBS" value="sdl-static/lib/BlackBerry/" if="blackberry"/>
+	<target id="NDLL" output="sdl" tool="linker" toolid="dll">
+		<outdir name="../ndll/${BINDIR}" />
+		<ext value=".ndll" unless="mobile"/>
+		<ext value=".ndll" if="gph"/>
+		<files id="common"/>
+		<files id="windows" if="windows"/>
+		<files id="iphone" if="iphone"/>
+		<files id="mac" if="macos"/>
+		<files id="linux" if="linux"/>
+		<files id="sdl" if="sdl"/>
+		<files id="android" if="android"/>
+		<files id="webos" if="webos"/>
+		<files id="blackberry" if="blackberry"/>
+		<lib name="-ldl" if="linux"/>
+		<lib name="-lGL" if="linux"/>
+		<lib name="-lpthread" if="linux"/>
+		<lib name="${THIRDPARTY_LIBS}libSDL_ttf${name_extra}${SLIBEXT}" unless="no_thirdparty_extras"/>
+		<lib name="${THIRDPARTY_LIBS}libjpeg${name_extra}${SLIBEXT}" unless="no_thirdparty_extras"/>
+		<lib name="${THIRDPARTY_LIBS}libpng${name_extra}${SLIBEXT}" unless="no_thirdparty_extras"/>
+		<lib name="${THIRDPARTY_LIBS}zlib${name_extra}${SLIBEXT}" if="windows"/>
+		<lib name="${THIRDPARTY_LIBS}libz${name_extra}${SLIBEXT}" if="macos" unless="dynamic_sdl"/>
+		<lib name="${THIRDPARTY_LIBS}libz${name_extra}${SLIBEXT}" if="linux" unless="dynamic_sdl"/>
+				
+		<lib name="${THIRDPARTY_LIBS}libSDL_mixer${name_extra}${SLIBEXT}" if="sdl"/>
+		<lib name="${THIRDPARTY_LIBS}libSDL${name_extra}${SLIBEXT}" if="sdl"/>
+		<lib name="${THIRDPARTY_LIBS}libSDL_image${name_extra}${SLIBEXT}" if="sdl"/>
+	</target>
+	<target id="default">         
+		<target id="NDLL"/>
+	</target>
+</xml>

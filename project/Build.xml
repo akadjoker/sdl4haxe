@@ -1,0 +1,123 @@
+<xml>
+	
+   <set name="PLATFORM" value="android-13" if="android" />
+   <set name="PLATFORM" value="android-13" if="HXCPP_X86" />
+   <set name="HXCPP_CPP11" value="1" />
+   
+	<include name="${HXCPP}/build-tool/BuildCommon.xml"/>
+	
+	<set name="mobile" value="1" if="iphone"/>
+	<set name="mobile" value="1" if="android"/>
+	<set name="mobile" value="1" if="blackberry"/>
+	<set name="mobile" value="1" if="webos"/>
+	
+	<files id="common">
+		
+		<compilerflag value="-Iinclude"/>
+		<compilerflag value="-Isdl-static/include"/>
+		<compilerflag value="-Isdl-static/include/SDL"/>
+		<compilerflag value="-frtti" if="android"/>
+		<compilerflag value="-fexceptions" if="android"/>
+		<compilerflag value="-DWIN32" if="windows"/>
+		<compilerflag value="-D_WINDOWS" if="windows"/>
+		<compilerflag value="-DWINDLL" if="windows"/>
+		<compilerflag value="-Dgnustl_static" if="android"/>  
+		<compilerflag value="-DGL_GLEXT_PROTOTYPES" if="android"/>  
+
+	
+		<file name="common/ExternalInterface.cpp"/>
+		<file name="common/sdlhaxe.cpp"/>
+		<file name="common/SDL_android_main.c"/>
+	
+		
+		
+	</files>
+	
+	<set name="THIRDPARTY_LIBS" value="sdl-static/lib/Windows/" if="windows"/>
+	<set name="THIRDPARTY_LIBS" value="sdl-static/lib/Android/" if="android"/>
+	
+	
+<set name="name_prefix" value="lib" if="iphone"/>
+	<set name="ARM_ARCH" value="-v7" if="HXCPP_ARMV7"/>
+	<set name="name_extra" value=".iphoneos${ARM_ARCH}" if="iphoneos"/>
+	<set name="name_extra" value=".iphonesim" if="iphonesim"/>
+	<set name="name_extra" value="-x86" if="simulator" unless="iphonesim" />
+	<set name="name_extra" value="-v7" if="android" />
+	<set name="name_extra" value="" if="android" unless="HXCPP_ARMV7" />
+	<set name="tool" value="exe" unless="iphone"/>
+	<set name="tool" value="static_link" if="iphone"/>
+	<set name="ndll-tool" value="dll" unless="iphone"/>
+	<set name="ndll-tool" value="static_link" if="iphone"/>
+	<set name="SLIBEXT" value=".lib" if="windows"/>
+	<set name="SLIBEXT" value=".a" unless="windows"/>
+	<set name="SLIBEXT" value=".so" if="webos"/>
+	
+	<target id="NDLL" output="${name_prefix}sdlhaxe${debug_extra}${name_extra}" tool="linker" toolid="${ndll-tool}">
+		
+	<section if="android">
+	    <lib name="-ldl" />
+		<lib name="-landroid" />
+		<lib name="-lGLESv1_CM" />
+		<lib name="-lGLESv2" />
+		<lib name="-lz"  />
+        <lib name="${THIRDPARTY_LIBS}libpixmap.a"  />
+	    <lib name="${THIRDPARTY_LIBS}libzip.a"  />
+		<lib name="${THIRDPARTY_LIBS}libSDL2.a"  />
+		<lib name="${THIRDPARTY_LIBS}libSDL2_image.a"  />
+		<lib name="${THIRDPARTY_LIBS}libSDL2_mixer.a"  />
+		<lib name="${THIRDPARTY_LIBS}libSDL2_ttf.a"  />
+		<lib name="${THIRDPARTY_LIBS}libsmpeg2.a"  />
+    </section>
+		
+		
+		
+<section if="windows">
+<lib name="ole32.lib"/>
+<lib name="kernel32.lib"/>      
+<lib name="user32.lib"/>      
+<lib name="gdi32.lib"/>      
+<lib name="winspool.lib"/>      
+<lib name="comdlg32.lib"/>      
+<lib name="advapi32.lib"/>      
+<lib name="shell32.lib"/>      
+<lib name="ole32.lib"/>      
+<lib name="oleaut32.lib"/>      
+<lib name="uuid.lib"/>      
+<lib name="odbc32.lib"/>      
+<lib name="odbccp32.lib"/>          
+			<lib name="winmm.lib"/>      
+			<lib name="imm32.lib"/>      
+			<lib name="version.lib"/>      
+    
+			<lib name="${THIRDPARTY_LIBS}libjpeg.lib"/>
+			<lib name="${THIRDPARTY_LIBS}libpng.lib"/>
+			<lib name="${THIRDPARTY_LIBS}libtiff.lib"/>
+			
+			<lib name="${THIRDPARTY_LIBS}libvorbis_static.lib"  />
+			<lib name="${THIRDPARTY_LIBS}libvorbisfile_static.lib"  />
+			<lib name="${THIRDPARTY_LIBS}libogg_static.lib"  />
+			<lib name="${THIRDPARTY_LIBS}libcurl_ssl.lib"  />
+			<lib name="${THIRDPARTY_LIBS}native_midi.lib"  />
+			<lib name="${THIRDPARTY_LIBS}timidity.lib"  />
+			<lib name="${THIRDPARTY_LIBS}smpeg.lib"  />
+			<lib name="${THIRDPARTY_LIBS}libfreetype.lib"  />
+			
+		    <lib name="${THIRDPARTY_LIBS}SDL2_static.lib"/>
+			<lib name="${THIRDPARTY_LIBS}SDL2_image.lib"/>
+			<lib name="${THIRDPARTY_LIBS}SDL2_mixer.lib"/>
+			<lib name="${THIRDPARTY_LIBS}SDL2_ttf.lib"/>
+	    </section>
+		
+		<outdir name="../ndll/${BINDIR}"/>
+		<ext value=".ndll" unless="mobile"/>
+		<files id="common"/>
+		
+	</target>
+	
+	<target id="default">
+		
+		<target id="NDLL"/>
+		
+	</target>
+	
+</xml>
